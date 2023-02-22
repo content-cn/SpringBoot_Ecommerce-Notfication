@@ -11,23 +11,33 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailServiceImpl implements EmailService {
 
-    @Autowired
     private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
     private String sender;
 
+    @Autowired
+    public EmailServiceImpl(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
     @Override
     public String sendEmail(EmailDetails details) {
         try {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
 
+            if (details.getRecipient() == null
+                || details.getMsgBody() == null
+                || details.getSubject() == null) {
+                throw new IllegalArgumentException("Invalid arguments provided");
+            }
+
             mailMessage.setFrom(sender);
             mailMessage.setTo(details.getRecipient());
             mailMessage.setText(details.getMsgBody());
             mailMessage.setSubject(details.getSubject());
 
+            // Mock API calls
             javaMailSender.send(mailMessage);
 
             return "Email sent successfully";

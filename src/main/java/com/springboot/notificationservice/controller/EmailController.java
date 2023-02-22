@@ -8,15 +8,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/email")
 public class EmailController {
 
-    @Autowired
     private EmailService emailService;
 
+    @Autowired
+    public EmailController(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
     @PostMapping("/sendEmail")
-    private String sendEmail(@RequestBody EmailDetails emailDetails) {
+    private String sendEmail(@RequestBody @Valid EmailDetails emailDetails) {
         String status = emailService.sendEmail(emailDetails);
         return status;
     }
